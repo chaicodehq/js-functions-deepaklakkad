@@ -55,20 +55,66 @@
  */
 export function mixColors(color1, color2) {
   // Your code here
+  if (!color1 || !color2) return null;
+  const { name: name1, r: r1, g: g1, b: b1 } = color1;
+  const { name: name2, r: r2, g: g2, b: b2 } = color2;
+  if (typeof name1 !== "string" || typeof name2 !== "string" ||
+      typeof r1 !== "number" || typeof g1 !== "number" || typeof b1 !== "number" ||
+      typeof r2 !== "number" || typeof g2 !== "number" || typeof b2 !== "number") {
+    return null;
+  }
+  return {
+    name: `${name1}-${name2}`,  
+    r: Math.round((r1 + r2) / 2),
+    g: Math.round((g1 + g2) / 2),
+    b: Math.round((b1 + b2) / 2)
+  };
 }
 
 export function adjustBrightness(color, factor) {
   // Your code here
+  if (!color || typeof factor !== "number") return null;
+  const { name, r, g, b } = color;
+  if (typeof name !== "string" || typeof r !== "number" || typeof g !== "number" || typeof b !== "number") {
+    return null;
+  }
+  const clamp = (value) => Math.min(255, Math.max(0, Math.round(value * factor)));
+  return {
+    name,
+    r: clamp(r),
+    g: clamp(g),
+    b: clamp(b)
+  };
 }
 
 export function addToPalette(palette, color) {
   // Your code here
+  if (!Array.isArray(palette)) return [color];
+  if (!color || typeof color.name !== "string" || typeof color.r !== "number" ||
+      typeof color.g !== "number" || typeof color.b !== "number") {
+    return [...palette];
+  }
+
+  return [...palette, color];
 }
 
 export function removeFromPalette(palette, colorName) {
   // Your code here
+  if (!Array.isArray(palette)) return [];
+  return palette.filter(color => color.name !== colorName);
 }
 
 export function mergePalettes(palette1, palette2) {
   // Your code here
+  const p1 = Array.isArray(palette1) ? palette1 : [];
+  const p2 = Array.isArray(palette2) ? palette2 : [];
+  const seenNames = new Set();
+  const merged = [];
+  for (const color of [...p1, ...p2]) {
+    if (color && typeof color.name === "string" && !seenNames.has(color.name)) {
+      merged.push(color);
+      seenNames.add(color.name);
+    }
+  }
+  return merged;
 }
